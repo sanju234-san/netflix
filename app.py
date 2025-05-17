@@ -1,73 +1,48 @@
 import streamlit as st
 from ibm_watson import AssistantV2, TextToSpeechV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-import base64
 
-# Watson Assistant setup
-assistant_auth = IAMAuthenticator(st.secrets["ibm"]["apikey"])
-assistant = AssistantV2(version="2021-06-14", authenticator=assistant_auth)
-assistant.set_service_url(st.secrets["ibm"]["url"])
-assistant_id = st.secrets["ibm"]["assistant_id"]
+# 🔐 Hardcoded IBM Watson credentials (ONLY for testing)
+IBM_API_KEY = "6cmuCiCMWg6oZgSDMb7edxZ_HIS8aOKlpLjDGVIaLYez"
+IBM_ASSISTANT_URL = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/8763f5c8-7b72-453e-bb7c-44bd7e75ed80"
+IBM_ASSISTANT_ID = "4416391a-7896-4764-b0fb-e0b6dcd68214"
 
-# Watson TTS setup
-tts_auth = IAMAuthenticator(st.secrets["ibm_tts"]["apikey"])
-tts = TextToSpeechV1(authenticator=tts_auth)
-tts.set_service_url(st.secrets["ibm_tts"]["url"])
+# Authenticator
+assistant_auth = IAMAuthenticator(IBM_API_KEY)
 
-# Streamlit page config
-st.set_page_config(page_title="IBM AI Chatbot with Voice")
-st.title("🗣️ IBM Watson AI Chatbot with Multilingual Voice")
+# Assistant Service
+assistant = AssistantV2(
+    version='2021-06-14',
+    authenticator=assistant_auth
+)
+assistant.set_service_url(IBM_ASSISTANT_URL)
 
-# Language/voice selector
-lang_voice_map = {
-    "English": "en-US_MichaelV3Voice",
-    "Hindi": "hi-IN_MadhurV3Voice",
-    "Spanish": "es-ES_EnriqueV3Voice",
-    "French": "fr-FR_ReneeV3Voice",
-    "German": "de-DE_DieterV3Voice"
-}
-language = st.selectbox("Choose response language", list(lang_voice_map.keys()))
-voice = lang_voice_map[language]
+# Create session
+session_id = assistant.create_session(assistant_id=IBM_ASSISTANT_ID).get_result()["session_id"]
 
-# Session & chat history
-if "session_id" not in st.session_state:
-    session = assistant.create_session(assistant_id=assistant_id).get_result()
-    st.session_state.session_id = session["session_id"]
+# Streamlit UI
+st.title("IBM Watson Chatbot")
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display chat history
 for msg in st.session_state.messages:
-    role = "🧑 You" if msg["role"] == "user" else "🤖 Bot"
-    st.markdown(f"**{role}:** {msg['content']}")
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-# Input field
-user_input = st.text_input("You:", key="user_input")
-if user_input:
-    st.session_state.messages.append({"role": "user", "content": user_input})
+if prompt := st.chat_input("Say something..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-    # Get chatbot response
+    # Watson Response
     response = assistant.message(
-        assistant_id=assistant_id,
-        session_id=st.session_state.session_id,
-        input={"message_type": "text", "text": user_input}
+        assistant_id=IBM_ASSISTANT_ID,
+        session_id=session_id,
+        input={"message_type": "text", "text": prompt}
     ).get_result()
 
-    if response["output"]["generic"]:
-        bot_reply = response["output"]["generic"][0]["text"]
-    else:
-        bot_reply = "I'm not sure how to respond."
-
-    st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-    st.markdown(f"**🤖 Bot:** {bot_reply}")
-
-    # Convert text to speech
-    audio = tts.synthesize(
-        bot_reply,
-        voice=voice,
-        accept='audio/mp3'
-    ).get_result().content
-
-    # Encode and play audio
-    b64_audio = base64.b64encode(audio).decode()
-    st.audio(f"data:audio/mp3;base64,{b64_audio}", format="audio/mp3")
+    reply = response["output"]["generic"][0]["text"]
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+    with st.chat_message("assistant"):
+        st.markdown(reply)
