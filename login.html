@@ -1,0 +1,47 @@
+<script>
+  async function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("http://localhost:5000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      alert("Login successful!");
+      window.location.href = "movies.html"; // Redirect after login
+    } else {
+      alert(data.message || "Login failed!");
+    }
+  }
+
+  function startVoiceInput(targetId) {
+    const recognition = new webkitSpeechRecognition(); // Only works in Chrome
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = function (event) {
+      const spokenText = event.results[0][0].transcript;
+      document.getElementById(targetId).value = spokenText;
+    };
+
+    recognition.onerror = function (event) {
+      alert("Voice input error: " + event.error);
+    };
+
+    recognition.start();
+  }
+</script>
+<input type="text" id="username" placeholder="Enter username" />
+<button type="button" onclick="startVoiceInput('username')">🎤 Speak Username</button>
+
+<input type="password" id="password" placeholder="Enter password" />
+<button type="button" onclick="startVoiceInput('password')">🎤 Speak Password</button>
+
+<button onclick="login()">Login</button>

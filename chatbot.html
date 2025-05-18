@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AskNova Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: #fff;
+      padding: 20px;
+    }
+    #chatbox {
+      border: 1px solid #888;
+      padding: 10px;
+      height: 400px;
+      overflow-y: auto;
+      background-color: #2a2a2a;
+      margin-bottom: 10px;
+    }
+    .user { color: #8ae234; }
+    .bot { color: #729fcf; }
+  </style>
+</head>
+<body>
+  <h2>AskNova Chatbot</h2>
+  <div id="chatbox"></div>
+  <input type="text" id="userInput" placeholder="Type your message..." style="width: 70%;" />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const chatbox = document.getElementById("chatbox");
+      const message = input.value.trim();
+      if (!message) return;
+
+      // Show user's message in chatbox
+      chatbox.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+      input.value = "";
+
+      try {
+        const response = await fetch(`http://localhost:5000/process?message=${encodeURIComponent(message)}`);
+
+        if (!response.ok) {
+          throw new Error("HTTP status " + response.status);
+        }
+
+        const data = await response.json();
+        console.log("Wit.ai Response:", data);  // Debug log
+
+        let reply = "🤖 Hmm... I didn't understand that.";
+
+        if (data.traits?.['wit$greetings']?.[0]?.value === "true") {
+          reply = "Hello! How can I help you today?";
+        } else if (data.traits?.['wit$sentiment']?.[0]?.value === "positive") {
+          reply = "I'm glad you're feeling positive! 😊";
+        } else if (data.traits?.['wit$sentiment']?.[0]?.value === "negative") {
+          reply = "I'm here for you. Want to talk more about it?";
+        }
+
+        chatbox.innerHTML += `<p class="bot"><b>Bot:</b> ${reply}</p>`;
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+      } catch (err) {
+        console.error("Fetch error:", err);
+        chatbox.innerHTML += `<p class="bot"><b>Bot:</b> Error contacting server</p>`;
+      }
+    }
+  </script>
+</body>
+</html>

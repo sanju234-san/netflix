@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movies</title>
+</head>
+<body>
+  <h1>Movies</h1>
+  <ul id="movieList"></ul>
+
+  <script>
+    async function fetchMovies() {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5000/movies", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const list = document.getElementById("movieList");
+        data.forEach(movie => {
+          const li = document.createElement("li");
+          li.textContent = movie.title;
+          list.appendChild(li);
+        });
+      } else {
+        alert("Failed to fetch movies");
+      }
+    }
+
+    fetchMovies();
+  </script>
+</body>
+</html>

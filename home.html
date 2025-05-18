@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Netflix Clone - Home</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: white;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #111;
+    }
+
+    .logo {
+      width: 100px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .banner {
+      background-image: url('https://www.themoviedb.org/t/p/original/x2RS3uTcsJJ9IfjNPcgDmukoEcQ.jpg');
+      background-size: cover;
+      background-position: center;
+      height: 70vh;
+      position: relative;
+      color: white;
+      display: flex;
+      align-items: flex-end;
+      padding: 40px;
+    }
+
+    .banner-content {
+      max-width: 600px;
+    }
+
+    .banner-buttons button {
+      cursor: pointer;
+      margin-right: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .play-btn {
+      background-color: white;
+      color: black;
+    }
+
+    .info-btn {
+      background-color: rgba(109, 109, 110, 0.7);
+      color: white;
+    }
+
+    .tts-btn {
+      background-color: #e50914;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .row {
+      padding: 20px;
+    }
+
+    .row h2 {
+      margin-bottom: 10px;
+    }
+
+    .row-posters {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+    }
+
+    .row-poster {
+      width: 200px;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 5px;
+      transition: transform 0.2s;
+    }
+
+    .row-poster:hover {
+      transform: scale(1.05);
+    }
+
+    iframe {
+      border: 2px solid #e50914;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="navbar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="logo" alt="Netflix Logo">
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">TV Shows</a></li>
+        <li><a href="#">Movies</a></li>
+        <li><a href="#">Latest</a></li>
+        <li><a href="#">My List</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="banner">
+    <div class="banner-content">
+      <h1>Stranger Things</h1>
+      <p id="banner-text">When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces.</p>
+      <div class="banner-buttons">
+        <button class="play-btn">► Play</button>
+        <button class="info-btn">ℹ More Info</button>
+        <button class="tts-btn" onclick="speakText()">🔊 Speak</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trending Now -->
+  <section class="row">
+    <h2>Trending Now</h2>
+    <div class="row-posters">
+      <img src="https://image.tmdb.org/t/p/w500/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg" class="row-poster" alt="Trending 1">
+      <img src="https://image.tmdb.org/t/p/w500/fQq1FWp1rC89xDrRMuyFJdFUdMd.jpg" class="row-poster" alt="Trending 2">
+      <img src="https://image.tmdb.org/t/p/w500/6CoRTJTmijhBLJTUNoVSUNxZMEI.jpg" class="row-poster" alt="Trending 3">
+      <img src="https://image.tmdb.org/t/p/w500/tWqifoYuwLETmmasnGHO7xBjEtt.jpg" class="row-poster" alt="Trending 4">
+      <img src="https://image.tmdb.org/t/p/w500/zGVbrulkupqpbwgiNedkJPyQum4.jpg" class="row-poster" alt="Trending 5">
+    </div>
+  </section>
+
+  <!-- Top Rated -->
+  <section class="row">
+    <h2>Top Rated</h2>
+    <div class="row-posters">
+      <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" class="row-poster" alt="Top 1">
+      <img src="https://image.tmdb.org/t/p/w500/5KCVkau1HEl7ZzfPsKAPM0sMiKc.jpg" class="row-poster" alt="Top 2">
+      <img src="https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg" class="row-poster" alt="Top 3">
+      <img src="https://image.tmdb.org/t/p/w500/sWgBv7LV2PRoQgkxwlibdGXKz1S.jpg" class="row-poster" alt="Top 4">
+    </div>
+  </section>
+
+  <!-- My List -->
+  <section class="row">
+    <h2>My List</h2>
+    <div class="row-posters">
+      <img src="https://image.tmdb.org/t/p/w500/m67smI1IIMmYzCl9axvKNULVKLr.jpg" class="row-poster" alt="My List 1">
+      <img src="https://image.tmdb.org/t/p/w500/5weKu49pzJCt06OPpjvT80efnQj.jpg" class="row-poster" alt="My List 2">
+      <img src="https://image.tmdb.org/t/p/w500/hUzeosd33nzE5MCNsZxCGEKTXaQ.jpg" class="row-poster" alt="My List 3">
+    </div>
+  </section>
+
+  <!-- Chatbot Integration -->
+  <section class="row" style="margin-top: 50px;">
+    <h2 style="color: white; text-align: center;">Need Help? Chat with Our AI Assistant</h2>
+    <div style="display: flex; justify-content: center; margin: 20px;">
+      <iframe 
+        src="http://localhost:8501"
+        width="90%" 
+        height="600" 
+        allow="microphone"
+      ></iframe>
+    </div>
+  </section>
+
+  <script>
+    function speakText() {
+      const text = document.getElementById("banner-text").innerText;
+
+      fetch("https://api.us-south.text-to-speech.watson.cloud.ibm.com/v1/synthesize?accept=audio%2Fmp3&voice=en-US_AllisonV3Voice", {
+        method: "POST",
+        headers: {
+          "Authorization": "Basic " + btoa("apikey:L4HZiCdP0js74Zh257CksORqJ8VF_QPQsk-Y38yWBTtX"), // ⚠️ Replace this
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: text })
+      })
+      .then(response => response.blob())
+      .then(blob => {
+        const audio = new Audio(URL.createObjectURL(blob));
+        audio.play();
+      })
+      .catch(err => console.error("TTS Error: ", err));
+    }
+  </script>
+
+</body>
+</html>
